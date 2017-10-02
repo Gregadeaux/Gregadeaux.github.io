@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import { Navbar, Nav, NavItem, Table, Button, Modal, Form, FormControl, Col, Row, FormGroup, ControlLabel } from 'react-bootstrap'
 import './App.css'
+import io from 'socket.io-client';
+import { ROOT_URL } from './Constants'
 
-import { getTodaysStudents, addStudent } from './api'
+import { getTodaysStudents, signinStudent, signoutStudent, lateStudent, addStudent } from './api'
+const socket = io(ROOT_URL);
 
 class App extends Component {
   constructor() {
@@ -21,6 +24,12 @@ class App extends Component {
 
   componentDidMount() {
     this.updateStudents()
+
+    socket.on('message', (json) => {
+      let sArray = {...this.state.students}
+      sArray[json.id] = json
+      this.setState({students: sArray})
+    })
   }
 
   render() {
@@ -42,7 +51,7 @@ class App extends Component {
                 <th>Current Students</th>
                 <th>Grade</th>
                 <th>Email</th>
-                <th></th>
+                <th>Today's Attendance</th>
               </tr>
             </thead>
             <tbody>
@@ -58,6 +67,18 @@ class App extends Component {
   renderStudents() {
     return Object.keys(this.state.students).map((key) => {
       let student = this.state.students[key]
+      let buttonStyle = "default"
+      let buttonText = "Absent"
+
+      if(student.date !== null) {
+        if(!student.late) {
+          buttonText = "On Time"
+          buttonStyle = "success"
+        }else {
+          buttonText = "Late"
+          buttonStyle = "warning"
+        }
+      }
 
       return (
         <tr key={student.id}>
@@ -65,7 +86,7 @@ class App extends Component {
           <td>{student.grade}</td>
           <td>{student.email}</td>
           <td>
-            <Button bsStyle="default">Sign In</Button>
+            <Button bsStyle={buttonStyle} onClick={this.studentPressed.bind(this, student)}>{buttonText}</Button>
           </td>
         </tr>
       )
@@ -197,6 +218,47 @@ class App extends Component {
       })
     }else {
       this.setState({submitted: true})
+    }
+  }
+
+  studentPressed(student) {
+    let students = {...this.state.students}
+    if(student.date === null) {
+      students[student.id] = {...student, date: new Date().toString(), late: false, sid: student.id}
+      this.setState({ students })
+
+      signinStudent(student)
+        .then((json) => {
+          if(!json.error) {
+            let sArray = {...this.state.students}
+            sArray[student.id] = {...sArray[student.id], ...json}
+            this.setState({students: sArray})
+          }
+        })
+    }else if(!student.late) {
+      students[student.id] = {...student, late: true}
+      this.setState({ students })
+
+      lateStudent(student)
+        .then((json) => {
+          if(!json.error) {
+            let sArray = {...this.state.students}
+            sArray[student.id] = {...sArray[student.id], ...json}
+            this.setState({students: sArray})
+          }
+        })
+    }else {
+      students[student.id] = {...student, date: null, late: null, sid: null}
+      this.setState({ students })
+
+      signoutStudent(student)
+        .then((json) => {
+          if(!json.error) {
+            let sArray = {...this.state.students}
+            sArray[student.id] = {...sArray[student.id], ...json}
+            this.setState({students: sArray})
+          }
+        })
     }
   }
 }

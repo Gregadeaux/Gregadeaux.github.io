@@ -1,7 +1,8 @@
-const ROOT_URL = 'https://agile-dawn-31578.herokuapp.com/api/'
+import { ROOT_URL } from '../Constants'
+const API_URL = `${ROOT_URL}/api/`
 
 export function getTodaysStudents() {
-	let url = `${ROOT_URL}students/today`
+	let url = `${API_URL}students/today`
 	return fetch(url, {
 		method: 'GET'
 	}).then((resp) => {
@@ -10,7 +11,7 @@ export function getTodaysStudents() {
 }
 
 export function signinStudent(student) {
-	let url = `${ROOT_URL}students/${student.id}/signin`
+	let url = `${API_URL}students/${student.id}/signin`
 	return fetch(url, {
 		method: 'POST'
 	}).then((resp) => {
@@ -19,7 +20,7 @@ export function signinStudent(student) {
 }
 
 export function signoutStudent(student) {
-	let url = `${ROOT_URL}students/${student.id}/signout`
+	let url = `${API_URL}students/${student.id}/signout`
 	return fetch(url, {
 		method: 'POST'
 	}).then((resp) => {
@@ -28,7 +29,7 @@ export function signoutStudent(student) {
 }
 
 export function lateStudent(student) {
-	let url = `${ROOT_URL}students/${student.id}/late`
+	let url = `${API_URL}students/${student.id}/late`
 	return fetch(url, {
 		method: 'POST'
 	}).then((resp) => {
@@ -37,7 +38,7 @@ export function lateStudent(student) {
 }
 
 export function addStudent(student) {
-	let url = `${ROOT_URL}students`
+	let url = `${API_URL}students`
 	return fetch(url, {
 		method: 'POST',
 		body: student
