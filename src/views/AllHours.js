@@ -22,8 +22,7 @@ export default class AllHours extends Component {
 
       json.forEach((h) => {
         if(!hours[h.id]) hours[h.id] = {}
-
-        hours[h.id][moment(h.date)] = h
+        hours[h.id][moment(h.date).format('ddd MMM Do')] = h
       })
 
       this.setState({ hours })
@@ -35,7 +34,6 @@ export default class AllHours extends Component {
   }
 
   render() {
-    
     return (
       <div class="container">
         <Table hover>
@@ -74,11 +72,12 @@ export default class AllHours extends Component {
 
   renderHoursForStudent(student) {
     if(this.state.hours[student.id]) {
-      console.log(this.state.hours[student.id])
       let rows = [<td></td>]
+      console.log(this.state.hours[student.id])
       for(let i = 0; i < 7; i++) {
         let date = this.state.startOfWeek.clone().add(i, 'day')
-        let hour = this.state.hours[student.id][date]
+        let hour = this.state.hours[student.id][date.format('ddd MMM Do')]
+        console.log(date)
 
         if(hour && hour.late) rows.push(<td class='late'>Late</td>)
         else if(hour) rows.push(<td class='here'>Here</td>)
