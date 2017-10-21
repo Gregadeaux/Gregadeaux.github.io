@@ -46,3 +46,22 @@ export function addStudent(student) {
 		return resp.json()
 	})	
 }
+
+export function updateStudent(id, student) {
+	let url = `${API_URL}students/${id}`
+	return fetch(url, {
+		method: 'PUT',
+		body: student
+	}).then((resp) => {
+		return resp.json()
+	})	
+}
+
+export function getAllSignins() {
+	let url = `${API_URL}signins`
+	return fetch(url, {
+		method: 'GET'
+	}).then((resp) => {
+		return resp.json()
+	})
+}

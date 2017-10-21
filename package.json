@@ -4,9 +4,11 @@
   "private": true,
   "homepage": "http://Gregadeaux.github.io",
   "dependencies": {
+    "moment": "^2.19.1",
     "react": "^16.0.0",
     "react-bootstrap": "^0.31.3",
     "react-dom": "^16.0.0",
+    "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.14",
     "socket.io": "^2.0.3"
   },
