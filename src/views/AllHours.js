@@ -74,11 +74,12 @@ export default class AllHours extends Component {
 
   renderHoursForStudent(student) {
     if(this.state.hours[student.id]) {
+      console.log(this.state.hours[student.id])
       let rows = [<td></td>]
       for(let i = 0; i < 7; i++) {
         let date = this.state.startOfWeek.clone().add(i, 'day')
         let hour = this.state.hours[student.id][date]
-        
+
         if(hour && hour.late) rows.push(<td class='late'>Late</td>)
         else if(hour) rows.push(<td class='here'>Here</td>)
         else rows.push(<td></td>)
