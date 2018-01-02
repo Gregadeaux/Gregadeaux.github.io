@@ -1,10 +1,19 @@
-.here {
-	background-color: #27ae60;
-	color: #fff;
+.cell {
+	height: 40px;
+	width: 125px;
 	text-align: center;
 }
-.late {
-	background-color: #e74c3c;
+
+.here {
 	color: #fff;
 	text-align: center;
+	background-color: #27ae60;
+}
+.late {
+	color: #fff;
+	text-align: center;
+	background-color: #e74c3c;
+}
+.name-cell {
+	min-width: 150px;
 }

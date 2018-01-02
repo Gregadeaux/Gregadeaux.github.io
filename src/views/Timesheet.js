@@ -82,10 +82,10 @@ class Timesheet extends Component {
       }
 
       return (
-        <tr key={student.id} onClick={this.showStudent.bind(this, student)}>
-          <td>{student.firstname} {student.lastname}</td>
-          <td>{student.grade}</td>
-          <td>{student.email}</td>
+        <tr key={student.id}>
+          <td onClick={this.showStudent.bind(this, student)}>{student.firstname} {student.lastname}</td>
+          <td onClick={this.showStudent.bind(this, student)}>{student.grade}</td>
+          <td onClick={this.showStudent.bind(this, student)}>{student.email}</td>
           <td>
             <Button bsStyle={buttonStyle} onClick={this.studentPressed.bind(this, student)}>{buttonText}</Button>
           </td>
