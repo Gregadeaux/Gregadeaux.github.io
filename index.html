@@ -1,0 +1,220 @@
+<html>
+<head>
+<style>
+
+label {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+	font-family: sans-serif;
+  font-size: 12px;
+}
+
+.state-interior {
+	fill: #fff;
+}
+
+.state-border {
+	fill: none;
+	stroke: lightslategrey;
+}
+
+.raster {
+	pointer-events: none;
+	fill: none;
+}
+
+.charcoalified .state-interior {
+	fill: #000;
+}
+
+.charcoalified .state-border {
+	stroke: none;
+}
+
+.legend {
+	 	font-size: 14px;
+	 	font-family: 'Proxima Nova', sans-serif;
+	}
+
+.legend_title {
+    font-size: 14px;
+    font-family: 'Proxima Nova', sans-serif;
+    font-weight: bold;
+}
+    
+div.tooltip {
+    position: absolute;
+    left: 75px;
+    text-align: center;
+    height: 16px;
+    padding: 10px;
+    font-size: 14px;
+    background: #FFFFFF;
+    border: 1px solid #989898;
+    pointer-events: none;
+}
+
+p {
+    font-family: 'Proxima Nova', sans-serif;
+    font-size:10px;
+    margin: 20px 0 0 10px;
+}
+
+body {
+	 	font-family: 'Proxima Nova', sans-serif;
+	}
+
+
+</style>
+</head>
+<body>
+
+<label>
+	<input type="checkbox">
+	Charcoalify
+</label>
+
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://d3js.org/d3-queue.v3.min.js"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script>
+
+var width = 960;
+var height = 1000;
+
+var path = d3.geo.path();
+var color_domain = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+var legend_labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+var range = [
+"#ffffff",
+"#ffffff",
+"#f9d3ca",
+"#f6c4b8",
+"#f2b6a7",
+"#eea797",
+"#e99986",
+"#e48a76",
+"#de7c66",
+"#d86d57",
+"#d15e47",
+"#ca4e38",
+"#c23d29",
+"#ba291a",
+"#b20a0a"
+]
+var color = d3.scale.threshold() 
+    .domain(color_domain)
+	.range(range);
+
+var svg = d3.select("body").append("svg")
+	.attr("width", width)
+	.attr("height", height);
+
+var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+d3.queue()
+    .defer(d3.json, 'wi2.json')
+    .defer(d3.csv, 'teams.csv')
+    .await(ready)
+
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+    this.parentNode.appendChild(this);
+    });
+}; 
+
+//Moves selction to back
+d3.selection.prototype.moveToBack = function() { 
+    return this.each(function() { 
+    var firstChild = this.parentNode.firstChild; 
+    if (firstChild) { 
+        this.parentNode.insertBefore(this, firstChild); 
+    } 
+    }); 
+};
+
+function ready(error, wi, data) {
+    var pairCountWithId = {};
+	var pairNameWithId = {};
+    var counties = topojson.feature(wi, wi.objects.cb_2015_wisconsin_county_20m);
+
+    data.forEach(team => {
+        console.log(team)
+        pairCountWithId[team.Code] = +team.Number;
+        pairNameWithId[team.Code] = team.County;
+    });
+
+    console.log(pairCountWithId)
+
+    svg.append('g')
+        .attr('class', 'county')
+        .selectAll('path')
+        .data(counties.features)
+        .enter().append('path')
+        .attr("class", "state-border")
+        .attr("d", path)
+        .attr('stroke-width', .1)
+        .attr('transform', 'translate(-5200,-1210) scale(10) rotate(3.3)')
+        .style('fill', d => color(pairCountWithId[d.properties.GEOID]))
+        .on("mouseover", function(d) {
+		 	var sel = d3.select(this);
+  			sel.moveToFront();
+		    d3.select(this).transition().duration(300).style({'opacity': 1, 'stroke': 'black', 'stroke-width': .2});
+		    div.transition().duration(300)
+		        .style("opacity", 1)
+		    div.text(pairNameWithId[d.properties.GEOID] + " County: " + pairCountWithId[d.properties.GEOID] + " team(s)")
+		        .style("left", (d3.event.pageX) + "px")
+		        .style("top", (d3.event.pageY -30) + "px");
+		 })
+		 .on("mouseout", function() {
+		 	var sel = d3.select(this);
+  			sel.moveToBack();
+		    d3.select(this)
+		        .transition().duration(300)
+		        .style({'opacity': 0.8, 'stroke': 'lightslategrey', 'stroke-width': .1});
+		    div.transition().duration(300)
+		        .style("opacity", 0);
+		 })
+
+        var legend = svg.selectAll("g.legend")
+		 .data(range.reverse())
+		 .enter().append("g")
+		 .attr("class", "legend");
+		 
+		var ls_w = 73, ls_h = 20;
+		 
+		legend.append("rect")
+		 .attr("x", function(d, i){ return width - (i*ls_w) - ls_w;})
+		 .attr("y", 900)
+		 .attr("width", ls_w)
+		 .attr("height", ls_h)
+		 .style("fill", function(d, i) { console.log(d,i); return d; })
+		 .style("opacity", 0.8);
+		 
+		legend.append("text")
+		 .attr("x", function(d, i){ return width - (i*ls_w) - ls_w;})
+		 .attr("y", 950)
+		 .text(function(d, i){ return legend_labels[13-i]; });
+
+		 var legend_title = "Number of teams";
+
+		 svg.append("text")
+		 .attr("x", 10)
+		 .attr("y", 880)
+		 .attr("class", "legend_title")
+		 .text(function(){return legend_title});
+        
+
+    // TODO: The raster data and vector data don't match up perfectly here
+    // This may be due to the fact that this state border is from merged
+    // county data and the raster image was clipped to a state border from
+    // a different vector file. May also be due to the projection issues. 
+
+};
+
+</script>
+</body>
+</html>
