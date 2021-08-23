@@ -79,24 +79,20 @@ var width = 960;
 var height = 1000;
 
 var path = d3.geo.path();
-var color_domain = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-var legend_labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+var color_domain = [0, 5, 10, 15, 20, 25, 30, 35]
+var legend_labels = ["0", "1-5", "6-10","11-15","16-20","21-25","26-30","31-35"]
 var range = [
 "#ffffff",
-"#ffffff",
-"#f9d3ca",
-"#f6c4b8",
-"#f2b6a7",
-"#eea797",
-"#e99986",
-"#e48a76",
-"#de7c66",
-"#d86d57",
-"#d15e47",
-"#ca4e38",
-"#c23d29",
-"#ba291a",
-"#b20a0a"
+"#f0e5ff",
+"#e0cbff",
+"#cfb1ff",
+"#bd98ff",
+"#a97fff",
+"#9265ff",
+"#774bff",
+"#552eff",
+"#0600ff",
+
 ]
 var color = d3.scale.threshold() 
     .domain(color_domain)
@@ -153,7 +149,7 @@ function ready(error, wi, data) {
         .attr("d", path)
         .attr('stroke-width', .1)
         .attr('transform', 'translate(-5200,-1210) scale(10) rotate(3.3)')
-        .style('fill', d => color(pairCountWithId[d.properties.GEOID]))
+        .style('fill', d => color(pairCountWithId[d.properties.GEOID]-1))
         .on("mouseover", function(d) {
 		 	var sel = d3.select(this);
   			sel.moveToFront();
@@ -192,9 +188,9 @@ function ready(error, wi, data) {
 		legend.append("text")
 		 .attr("x", function(d, i){ return width - (i*ls_w) - ls_w;})
 		 .attr("y", 950)
-		 .text(function(d, i){ return legend_labels[legend_labels.length - 2 - i]; });
+		 .text(function(d, i){ return legend_labels[legend_labels.length - 1 - i]; });
 
-		 var legend_title = "Number of FRC teams in 2020";
+		 var legend_title = "Number of FIRST High School Teams in 2020";
 
 		 svg.append("text")
 		 .attr("x", 10)
