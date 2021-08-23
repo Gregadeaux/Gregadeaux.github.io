@@ -85,7 +85,7 @@ var height = 1000;
 
 var path = d3.geo.path();
 var color_domain = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-var legend_labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+var legend_labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 var range = [
 "#ffffff",
 "#ffffff",
@@ -117,7 +117,7 @@ var div = d3.select("body").append("div")
 
 d3.queue()
     .defer(d3.json, 'wi2.json')
-    .defer(d3.csv, 'teams.csv')
+    .defer(d3.csv, 'teamdata.csv')
     .await(ready)
 
 d3.selection.prototype.moveToFront = function() {
@@ -180,7 +180,7 @@ function ready(error, wi, data) {
 		 })
 
         var legend = svg.selectAll("g.legend")
-		 .data(range.reverse())
+		 .data(range.slice(0, range.length-1).reverse())
 		 .enter().append("g")
 		 .attr("class", "legend");
 		 
@@ -197,9 +197,9 @@ function ready(error, wi, data) {
 		legend.append("text")
 		 .attr("x", function(d, i){ return width - (i*ls_w) - ls_w;})
 		 .attr("y", 950)
-		 .text(function(d, i){ return legend_labels[13-i]; });
+		 .text(function(d, i){ return legend_labels[legend_labels.length - 2 - i]; });
 
-		 var legend_title = "Number of teams";
+		 var legend_title = "Number of FRC teams in 2020";
 
 		 svg.append("text")
 		 .attr("x", 10)
