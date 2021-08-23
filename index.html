@@ -80,7 +80,7 @@ var height = 1000;
 
 var path = d3.geo.path();
 var color_domain = [0, 5, 10, 15, 20, 25, 30, 35]
-var legend_labels = ["0", "1-5", "6-10","11-15","16-20","21-25","26-30","31-35"]
+var legend_labels = ["0", "1-5", "6-10","11-15","16-20","21-25","26-30","31-35", "35 - 40"]
 var range = [
 "#ffffff",
 "#f0e5ff",
@@ -171,32 +171,32 @@ function ready(error, wi, data) {
 		 })
 
         var legend = svg.selectAll("g.legend")
-		 .data(range.slice(0, range.length-1).reverse())
-		 .enter().append("g")
-		 .attr("class", "legend");
+            .data(range.slice(0, range.length-1).reverse())
+            .enter().append("g")
+            .attr("class", "legend");
 		 
 		var ls_w = 73, ls_h = 20;
 		 
 		legend.append("rect")
-		 .attr("x", function(d, i){ return width - (i*ls_w) - ls_w;})
-		 .attr("y", 900)
-		 .attr("width", ls_w)
-		 .attr("height", ls_h)
-		 .style("fill", function(d, i) { console.log(d,i); return d; })
-		 .style("opacity", 0.8);
+            .attr("x", function(d, i){ return width - 200 - (i*ls_w) - ls_w;})
+            .attr("y", 920)
+            .attr("width", ls_w)
+            .attr("height", ls_h)
+            .style("fill", function(d, i) { console.log(d,i); return d; })
+            .style("opacity", 0.8);
 		 
 		legend.append("text")
-		 .attr("x", function(d, i){ return width - (i*ls_w) - ls_w;})
-		 .attr("y", 950)
-		 .text(function(d, i){ return legend_labels[legend_labels.length - 1 - i]; });
+            .attr("x", function(d, i){ return width - 200 - (i*ls_w) - ls_w;})
+            .attr("y", 970)
+            .text(function(d, i){ return legend_labels[legend_labels.length - 1 - i]; });
 
 		 var legend_title = "Number of FIRST High School Teams in 2020";
 
 		 svg.append("text")
-		 .attr("x", 10)
-		 .attr("y", 880)
-		 .attr("class", "legend_title")
-		 .text(function(){return legend_title});
+            .attr("x", 100)
+            .attr("y", 900)
+            .attr("class", "legend_title")
+            .text(function(){return legend_title});
         
 
     // TODO: The raster data and vector data don't match up perfectly here
